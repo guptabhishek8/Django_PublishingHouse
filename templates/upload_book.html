@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Book</title>
+</head>
+<body>
+    <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
+    <h3>Upload Books</h3>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Upload Book</button>
+    </form>
+</body>
+</html>

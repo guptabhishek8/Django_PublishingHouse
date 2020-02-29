@@ -5,13 +5,18 @@
     <title>Home</title>
 </head>
 <body>
-    Welcome
     {% if user.is_authenticated %}
         <li> Hello, {{ user.first_name }}</li>
         <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
+        <button type="button" onclick="location.href='{% url 'dashboard' %}'" >Dashboard</button>
     {% else %}
+        Welcome
         <button type="button" onclick="location.href='{% url 'login' %}'" >Login</button>
         <button type="button" onclick="location.href='{% url 'register' %}'" >Register</button>
+
     {% endif %}
+        <button type="button">Contact us</button>
+        <button type="button">About</button>
+
 </body>
 </html>

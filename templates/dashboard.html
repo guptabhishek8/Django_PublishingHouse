@@ -5,7 +5,9 @@
     <title>Dashboard</title>
 </head>
 <body>
-    Hello {{ user.first_name }}, You are successfully logged in!
+<h2>Personal User Dashboard</h2>
+    Hello {{ user.first_name }}!
     <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
+    <button type="button" onclick="location.href= '{% url 'book_list' %}'">Books</button>
 </body>
 </html>

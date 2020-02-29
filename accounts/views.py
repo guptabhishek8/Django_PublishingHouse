@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
+from .forms import BookForm
+from .models import Book
 
 
 def indexView(request):
@@ -54,7 +57,7 @@ def loginView(request):
 
         if user is not None:
             auth.login(request, user)
-            return redirect("dashboard")
+            return redirect("home")
         else:
             messages.info(request, "invalid credentials")
             return redirect('login')
@@ -67,3 +70,36 @@ def logoutView(request):
     auth.logout(request)
     return redirect('/')
 
+
+@login_required(login_url='login')
+def uploadView(request):
+    context = {}
+    if request.method == 'POST':
+        uploaded_file = request.FILES['document']
+        fs = FileSystemStorage()
+        name = fs.save(uploaded_file.name, uploaded_file)
+        url = fs.url(name)
+        context['url']= fs.url(name)
+    return render(request, 'upload.html', context)
+
+
+@login_required(login_url='login')
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'book_list.html', {
+        'books': books
+    })
+
+
+@login_required(login_url='login')
+def upload_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('book_list')
+    else:
+        form = BookForm()
+    return render(request, 'upload_book.html', {
+        'form': form
+    })

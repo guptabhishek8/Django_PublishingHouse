@@ -9,7 +9,7 @@
         {% csrf_token %}
         <input type="text" name="username" placeholder="username"><br>
         <input type="password" name="password" placeholder="password"><br>
-        <input type="submit">
+        <button type="submit">Submit</button>
         <button type="button" onclick="location.href='{% url 'register' %}'" >Register</button>
     </form>
 
