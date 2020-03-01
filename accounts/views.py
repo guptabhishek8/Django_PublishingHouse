@@ -16,6 +16,13 @@ def dashboardView(request):
     return render(request, 'dashboard.html')
 
 
+def adminView(request):
+    books = Book.objects.all()
+    return render(request, 'admin.html', {
+        'books': books,
+    })
+
+
 def registerView(request):
 
     if request.method == 'POST':
@@ -57,7 +64,10 @@ def loginView(request):
 
         if user is not None:
             auth.login(request, user)
-            return redirect("home")
+            if request.user.is_superuser:
+                return redirect("admin")
+            else:
+                return redirect("home")
         else:
             messages.info(request, "invalid credentials")
             return redirect('login')
@@ -72,22 +82,11 @@ def logoutView(request):
 
 
 @login_required(login_url='login')
-def uploadView(request):
-    context = {}
-    if request.method == 'POST':
-        uploaded_file = request.FILES['document']
-        fs = FileSystemStorage()
-        name = fs.save(uploaded_file.name, uploaded_file)
-        url = fs.url(name)
-        context['url']= fs.url(name)
-    return render(request, 'upload.html', context)
-
-
-@login_required(login_url='login')
 def book_list(request):
     books = Book.objects.all()
+    username = request.user.username
     return render(request, 'book_list.html', {
-        'books': books
+        'books': books, 'username': username,
     })
 
 
@@ -96,10 +95,22 @@ def upload_book(request):
     if request.method == 'POST':
         form = BookForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            post = Book()
+            post.title = request.POST.get('title')
+            post.author = request.POST.get('author')
+            post.username = request.user.username
+            post.pdf = request.FILES.get('pdf')
+            post.save()
             return redirect('book_list')
     else:
         form = BookForm()
     return render(request, 'upload_book.html', {
         'form': form
     })
+
+
+def delete_book(request, pk):
+    if request.method == "POST":
+        book = Book.objects.get(pk=pk)
+        book.delete()
+    return redirect('book_list')

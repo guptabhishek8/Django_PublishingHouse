@@ -22,7 +22,6 @@
     </thead>
     <tbody>
         {%  for book in books %}
-            {% if book.username == username %}
             <tr>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
@@ -32,16 +31,13 @@
                     </a>
                 </td>
                 <td>
-                    <form method="POST" action="{% url 'delete_book' book.pk %} ">
-                        <button type="submit">Delete</button>
-                    </form>
+                    Delete
                 </td>
                 <td>
                     {{ book.status }}
                 </td>
 
             </tr>
-            {% endif %}
         {% endfor %}
     </tbody>
 </table>
