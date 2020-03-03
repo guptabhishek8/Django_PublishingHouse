@@ -8,7 +8,7 @@
     {% if user.is_authenticated %}
         <li> Hello, {{ user.first_name }}</li><br><br>
         <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
-        <button type="button" onclick="location.href='{% url 'dashboard' %}'" >Dashboard</button>
+        <button type="button" onclick="location.href='{% url 'book_list' %}'" >Dashboard</button>
         <button type="button" onclick="location.href='{% url 'book_approved1' %}'" >Published Books</button>
     {% else %}
         Welcome<br><br>

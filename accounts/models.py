@@ -18,14 +18,3 @@ class Book(models.Model):
         self.pdf.delete()
         super().delete(*args, **kwargs)
 
-
-class BookApproved(models.Model):
-    title = models.CharField(max_length=100)
-    author = models.CharField(max_length=100)
-    pdf = models.FileField(upload_to="books/ApprovedPdfs/")
-    username = models.CharField(max_length=100)
-    date_created = models.DateTimeField(auto_now_add=True, null=True)
-
-    def __str__(self):
-        return self.title
-

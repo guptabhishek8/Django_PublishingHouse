@@ -4,20 +4,12 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from .forms import BookForm
-from .models import Book, BookApproved
+from .models import Book
 
 
 def indexView(request):
     if not request.user.is_superuser:
         return render(request, 'home.html')
-    else:
-        return redirect('admin')
-
-
-@login_required(login_url='login')
-def dashboardView(request):
-    if not request.user.is_superuser:
-        return render(request, 'dashboard.html')
     else:
         return redirect('admin')
 
@@ -85,7 +77,7 @@ def book_list(request):
     if not request.user.is_superuser:
         books = Book.objects.all()
         username = request.user.username
-        return render(request, 'book_list.html', {
+        return render(request, 'dashboard.html', {
             'books': books, 'username': username,
         })
     else:
@@ -127,7 +119,7 @@ def delete_book(request, pk):
 def adminView(request):
     if request.user.is_superuser:
         books = Book.objects.all()
-        return render(request, 'admin.html', {
+        return render(request, 'adminhome.html', {
             'books': books,
         })
     else:
@@ -148,7 +140,7 @@ def book_pending(request):              # For Admin Pending book, will have butt
 
 def book_approved(request):             # For Admin Approved bookView, will have extra buttons.
     if request.user.is_superuser:
-        books = BookApproved.objects.all()
+        books = Book.objects.all()
         return render(request, 'admin_approved.html', {
             'books': books,
         })
@@ -163,13 +155,6 @@ def approve_book(request, pk):                       # Button To ApproveBook  fo
             book = Book.objects.get(pk=pk)
             book.status = "Approved"
             book.save()
-
-            ApprovedBook = BookApproved()
-            ApprovedBook.title = book.title
-            ApprovedBook.author = book.author
-            ApprovedBook.username = book.username
-            ApprovedBook.pdf = book.pdf
-            ApprovedBook.save()
 
             return redirect('book_pending')
     else:
@@ -189,7 +174,7 @@ def disapprove_book(request, pk):                       # Button To DispproveBoo
 
 
 def book_approved1(request):                       # For Dashboard view Approved Books
-    books = BookApproved.objects.all()
+    books = Book.objects.all()
     return render(request, 'approvedbooks.html', {
         'books': books,
     })
