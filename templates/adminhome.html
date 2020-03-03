@@ -8,8 +8,10 @@
 <h2>ADMIN Dashboard</h2>
     Hello SiRJi! <br><br>
     <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
-    <button type="button" onclick="location.href= '{% url 'book_pending' %}'">Pending</button>
-    <button type="button" onclick="location.href= '{% url 'book_approved' %}'">Approved</button>
+    <button type="button" onclick="location.href= '{% url 'book_pending' %}'">Pending Books</button>
+    <button type="button" onclick="location.href= '{% url 'book_approved' %}'">Approved Books</button>
+    <button type="button" onclick="location.href= '{% url 'book_disapproved' %}'">Rejected Books</button>
+
 
 </body>
 </html>

@@ -15,56 +15,62 @@ def indexView(request):
 
 
 def registerView(request):
-    if request.method == 'POST':
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        username = request.POST['username']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-
-        if password1 == password2:
-            if User.objects.filter(username=username).exists():
-                messages.info(request, 'Username Taken')
-                return redirect('register')
-
-            elif User.objects.filter(email=email).exists():
-                messages.info(request, 'Email Taken')
-                return redirect('register')
-
-            else:
-                user = User.objects.create_user(username=username, password=password1, email=email,
-                                                first_name=first_name, last_name=last_name)
-                user.save()
-                print('user Created')
-                return redirect('login')
-        else:
-            messages.info(request, 'Password not matching')
-            return redirect('register')
-
+    if request.user.is_authenticated:
+        return redirect('home')
     else:
-        return render(request, 'register.html')
+        if request.method == 'POST':
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            username = request.POST['username']
+            email = request.POST['email']
+            password1 = request.POST['password1']
+            password2 = request.POST['password2']
+
+            if password1 == password2:
+                if User.objects.filter(username=username).exists():
+                    messages.info(request, 'Username Taken')
+                    return redirect('register')
+
+                elif User.objects.filter(email=email).exists():
+                    messages.info(request, 'Email Taken')
+                    return redirect('register')
+
+                else:
+                    user = User.objects.create_user(username=username, password=password1, email=email,
+                                                    first_name=first_name, last_name=last_name)
+                    user.save()
+                    print('user Created')
+                    return redirect('login')
+            else:
+                messages.info(request, 'Password not matching')
+                return redirect('register')
+
+        else:
+            return render(request, 'register.html')
 
 
 def loginView(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-
-        user = auth.authenticate(username=username, password=password)
-
-        if user is not None:
-            auth.login(request, user)
-            if request.user.is_superuser:
-                return redirect("admin")
-            else:
-                return redirect("home")
-        else:
-            messages.info(request, "invalid credentials")
-            return redirect('login')
-
+    if request.user.is_authenticated:
+        return redirect('home')
     else:
-        return render(request, 'login.html')
+        if request.method == 'POST':
+            username = request.POST['username']
+            password = request.POST['password']
+
+            user = auth.authenticate(username=username, password=password)
+
+            if user is not None:
+                auth.login(request, user)
+                if request.user.is_superuser:
+                    return redirect("admin")
+                else:
+                    return redirect("home")
+            else:
+                messages.info(request, "invalid credentials")
+                return redirect('login')
+
+        else:
+            return render(request, 'login.html')
 
 
 def logoutView(request):
@@ -106,6 +112,7 @@ def upload_book(request):
         return redirect('admin')
 
 
+@login_required(login_url='login')
 def delete_book(request, pk):
     if not request.user.is_superuser:
         if request.method == "POST":
@@ -149,6 +156,17 @@ def book_approved(request):             # For Admin Approved bookView, will have
         return redirect('home')
 
 
+def book_disapproved(request):             # For Admin DIsApproved bookView, will have extra buttons.
+    if request.user.is_superuser:
+        books = Book.objects.all()
+        return render(request, 'admin_disapproved.html', {
+            'books': books,
+        })
+    else:
+        messages.info(request, "You are not admin, Don't try to be one")
+        return redirect('home')
+
+
 def approve_book(request, pk):                       # Button To ApproveBook  for admin
     if request.user.is_superuser:
         if request.method == "POST":
@@ -161,11 +179,11 @@ def approve_book(request, pk):                       # Button To ApproveBook  fo
         return redirect('home')
 
 
-def disapprove_book(request, pk):                       # Button To DispproveBook  for admin
+def disapprove_book(request, pk):                       # Button To DisapproveBook  for admin
     if request.user.is_superuser:
         if request.method == "POST":
             book = Book.objects.get(pk=pk)
-            book.status = "Disapproved"
+            book.status = "Rejected"
             book.save()
 
             return redirect('book_pending')

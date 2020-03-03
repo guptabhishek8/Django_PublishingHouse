@@ -32,7 +32,10 @@
                     {{ book.date_created }}
                 </td>
                 <td>
-                    <button type="button">Depublish</button>
+                    <form method="POST" action="{% url 'disapprove_book' book.pk %} ">
+                            {% csrf_token %}
+                            <button type="submit">Depublish</button>
+                    </form>
                 </td>
             </tr>
             {% endif %}

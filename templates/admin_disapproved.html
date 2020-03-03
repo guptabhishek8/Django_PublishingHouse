@@ -2,24 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pending Books</title>
+    <title>Approved Books</title>
 </head>
 <body>
     <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
-<h3> Pending Books</h3>
+<h3>Admin View - Approved Books </h3>
 <table>
     <thead>
         <tr>
             <th>Title</th>
             <th>Authors</th>
             <th>Download</th>
-            <th>Status</th>
+            <th>Date Published</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
         {%  for book in books %}
-            {% if book.status == 'Pending' %}
+            {% if book.status == "Rejected" %}
             <tr>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
@@ -29,21 +29,14 @@
                     </a>
                 </td>
                 <td>
-                    {{ book.status }}
+                    {{ book.date_created }}
                 </td>
                 <td>
-                        <form method="POST" action="{% url 'approve_book' book.pk %} ">
+                    <form method="POST" action="{% url 'approve_book' book.pk %} ">
                             {% csrf_token %}
-                            <button type="submit">Approve</button>
-                        </form>
-
-                        <form method="POST" action="{% url 'disapprove_book' book.pk %} ">
-                            {% csrf_token %}
-                            <button type="submit">Reject</button>
-                        </form>
-
+                            <button type="submit">Publish</button>
+                    </form>
                 </td>
-
             </tr>
             {% endif %}
         {% endfor %}
