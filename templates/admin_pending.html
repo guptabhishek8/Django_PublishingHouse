@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Books</title>
+    <title>Pending Books</title>
 </head>
 <body>
     <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
-<h3>Books</h3>
+<h3> Pending Books</h3>
 <table>
     <thead>
         <tr>
@@ -19,6 +19,7 @@
     </thead>
     <tbody>
         {%  for book in books %}
+            {% if book.status == 'Pending' %}
             <tr>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
@@ -31,11 +32,20 @@
                     {{ book.status }}
                 </td>
                 <td>
-                        <button>Approve</button>
-                        <button>Disapprove</button>
+                        <form method="POST" action="{% url 'approve_book' book.pk %} ">
+                            {% csrf_token %}
+                            <button type="submit">Approve</button>
+                        </form>
+
+                        <form method="POST" action="{% url 'disapprove_book' book.pk %} ">
+                            {% csrf_token %}
+                            <button type="submit">Disapprove</button>
+                        </form>
+
                 </td>
 
             </tr>
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>

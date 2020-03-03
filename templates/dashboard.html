@@ -6,7 +6,7 @@
 </head>
 <body>
 <h2>Personal User Dashboard</h2>
-    Hello {{ user.first_name }}!
+    Hello {{ user.first_name }}! <br><br>
     <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
     <button type="button" onclick="location.href= '{% url 'book_list' %}'">Books</button>
 </body>

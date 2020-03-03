@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from .forms import BookForm
-from .models import Book
+from .models import Book, BookApproved
 
 
 def indexView(request):
@@ -41,7 +41,8 @@ def registerView(request):
                 return redirect('register')
 
             else:
-                user = User.objects.create_user(username=username, password=password1, email=email, first_name= first_name, last_name=last_name)
+                user = User.objects.create_user(username=username, password=password1, email=email,
+                                                first_name=first_name, last_name=last_name)
                 user.save()
                 print('user Created')
                 return redirect('login')
@@ -134,7 +135,7 @@ def adminView(request):
         return redirect('home')
 
 
-def book_pending(request):
+def book_pending(request):              # For Admin Pending book, will have button to approve/disapprove
     if request.user.is_superuser:
         books = Book.objects.all()
         return render(request, 'admin_pending.html', {
@@ -145,12 +146,50 @@ def book_pending(request):
         return redirect('home')
 
 
-def book_approved(request):
+def book_approved(request):             # For Admin Approved bookView, will have extra buttons.
     if request.user.is_superuser:
-        books = Book.objects.all()
+        books = BookApproved.objects.all()
         return render(request, 'admin_approved.html', {
             'books': books,
         })
     else:
         messages.info(request, "You are not admin, Don't try to be one")
         return redirect('home')
+
+
+def approve_book(request, pk):                       # Button To ApproveBook  for admin
+    if request.user.is_superuser:
+        if request.method == "POST":
+            book = Book.objects.get(pk=pk)
+            book.status = "Approved"
+            book.save()
+
+            ApprovedBook = BookApproved()
+            ApprovedBook.title = book.title
+            ApprovedBook.author = book.author
+            ApprovedBook.username = book.username
+            ApprovedBook.pdf = book.pdf
+            ApprovedBook.save()
+
+            return redirect('book_pending')
+    else:
+        return redirect('home')
+
+
+def disapprove_book(request, pk):                       # Button To DispproveBook  for admin
+    if request.user.is_superuser:
+        if request.method == "POST":
+            book = Book.objects.get(pk=pk)
+            book.status = "Disapproved"
+            book.save()
+
+            return redirect('book_pending')
+    else:
+        return redirect('home')
+
+
+def book_approved1(request):                        # For Dashboard view Approved Books
+    books = BookApproved.objects.all()
+    return render(request, 'approvedbooks.html', {
+        'books': books,
+    })
