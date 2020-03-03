@@ -188,7 +188,7 @@ def disapprove_book(request, pk):                       # Button To DispproveBoo
         return redirect('home')
 
 
-def book_approved1(request):                        # For Dashboard view Approved Books
+def book_approved1(request):                       # For Dashboard view Approved Books
     books = BookApproved.objects.all()
     return render(request, 'approvedbooks.html', {
         'books': books,
