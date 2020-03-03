@@ -2,45 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Books</title>
+    <title>Dashboard</title>
 </head>
 <body>
+<h2>Personal User Dashboard</h2>
+    Hello SiRJi!
     <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
-<h3>Books</h3>
-<p>
-    <a href="{% url 'upload_book' %}">Upload Book</a>
-</p>
-<table>
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Authors</th>
-            <th>Download</th>
-            <th>Delete</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {%  for book in books %}
-            <tr>
-                <td>{{ book.title }}</td>
-                <td>{{ book.author }}</td>
-                <td>
-                    <a href="{{ book.pdf.url }}" target="_blank">
-                        Download PDF
-                    </a>
-                </td>
-                <td>
-                    Delete
-                </td>
-                <td>
-                    {{ book.status }}
-                </td>
-
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <button type="button" onclick="location.href= '{% url 'book_pending' %}'">Pending</button>
+    <button type="button" onclick="location.href= '{% url 'book_approved' %}'">Approved</button>
 
 </body>
 </html>

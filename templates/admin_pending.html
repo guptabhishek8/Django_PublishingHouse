@@ -7,23 +7,18 @@
 <body>
     <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
 <h3>Books</h3>
-<p>
-
-    <a href="{% url 'upload_book' %}">Upload Book</a>
-</p>
 <table>
     <thead>
         <tr>
             <th>Title</th>
             <th>Authors</th>
             <th>Download</th>
-            <th>Delete</th>
             <th>Status</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
         {%  for book in books %}
-            {% if book.username == username %}
             <tr>
                 <td>{{ book.title }}</td>
                 <td>{{ book.author }}</td>
@@ -33,17 +28,14 @@
                     </a>
                 </td>
                 <td>
-                    <form method="POST" action="{% url 'delete_book' book.pk %} ">
-                        {% csrf_token %}
-                        <button type="submit">Delete</button>
-                    </form>
+                    {{ book.status }}
                 </td>
                 <td>
-                    {{ book.status }}
+                        <button>Approve</button>
+                        <button>Disapprove</button>
                 </td>
 
             </tr>
-            {% endif %}
         {% endfor %}
     </tbody>
 </table>
