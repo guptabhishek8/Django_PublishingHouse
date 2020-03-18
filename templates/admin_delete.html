@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Approved Books</title>
+</head>
+<body>
+    <button type="button" onclick="location.href='{% url 'logout' %}'" >Logout</button>
+<h3>Admin View - Deleted books by user </h3>
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Authors</th>
+            <th>Download</th>
+            <th>Date Published</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%  for book in books %}
+            {% if book.status == "Deleted" %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>
+                    <a href="{{ book.pdf.url }}" target="_blank">
+                        Download PDF
+                    </a>
+                </td>
+                <td>
+                    {{ book.date_created }}
+                </td>
+                <td>
+                    <form method="POST" action="{% url 'perm_delete_book' book.pk %} ">
+                        {% csrf_token %}
+                        <button type="submit">Delete Permanently</button>
+                    </form>
+                    <form method="POST" action="{% url 'recover_delete_book' book.pk %} ">
+                        {% csrf_token %}
+                        <button type="submit">Recover</button>
+                    </form>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -112,12 +112,36 @@ def upload_book(request):
         return redirect('admin')
 
 
-@login_required(login_url='login')
-def delete_book(request, pk):
-    if not request.user.is_superuser:
+def permanently_delete_book(request, pk):
+    if request.user.is_superuser:
         if request.method == "POST":
             book = Book.objects.get(pk=pk)
             book.delete()
+        return redirect('book_delete_page')
+    else:
+        messages.info(request, "You are not admin, Don't try to be one")
+        return redirect('home')
+
+
+def recover_delete_book(request, pk):
+    if request.user.is_superuser:
+        if request.method == "POST":
+            book = Book.objects.get(pk=pk)
+            book.status = 'pending'
+            book.save()
+        return redirect('book_delete_page')
+    else:
+        messages.info(request, "You are not admin, Don't try to be one")
+        return redirect('home')
+
+
+@login_required(login_url='login')
+def delete(request, pk):
+    if not request.user.is_superuser:
+        if request.method == "POST":
+            book = Book.objects.get(pk=pk)
+            book.status = "Deleted"
+            book.save()
         return redirect('book_list')
     else:
         return redirect('admin')
@@ -160,6 +184,17 @@ def book_disapproved(request):             # For Admin DIsApproved bookView, wil
     if request.user.is_superuser:
         books = Book.objects.all()
         return render(request, 'admin_disapproved.html', {
+            'books': books,
+        })
+    else:
+        messages.info(request, "You are not admin, Don't try to be one")
+        return redirect('home')
+
+
+def book_delete(request):             # For Admin deleted bookView, will have extra buttons.
+    if request.user.is_superuser:
+        books = Book.objects.all()
+        return render(request, 'admin_delete.html', {
             'books': books,
         })
     else:
