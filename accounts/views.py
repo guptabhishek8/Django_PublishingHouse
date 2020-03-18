@@ -60,6 +60,7 @@ def loginView(request):
             user = auth.authenticate(username=username, password=password)
 
             if user is not None:
+                request.session.set_expiry(300)
                 auth.login(request, user)
                 if request.user.is_superuser:
                     return redirect("admin")
